@@ -6,6 +6,7 @@ from ultralytics import YOLO
 model = YOLO('yolov8n.pt') 
 
 def get_risk_metrics(img_array):
+    # Run YOLOv8 Detection
     results = model(img_array, verbose=False)
     annotated_img = results[0].plot() 
 
@@ -13,18 +14,17 @@ def get_risk_metrics(img_array):
     threat_classes = [43, 76, 34] 
     detected_threats = [box for box in results[0].boxes if int(box.cls) in threat_classes]
     
-    # Environmental Signals
+    # Environmental Analysis
     gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
     darkness_score = 1 - (np.mean(gray) / 255)
     
-    people = [box for box in results[0].boxes if int(box.cls) == 0]
-    p_count = len(people)
+    # Isolation Check (Class 0 is person)
+    p_count = len([box for box in results[0].boxes if int(box.cls) == 0])
 
     return {
         "darkness": darkness_score,
         "isolation": 1.0 if p_count == 0 else 0,
         "threat_detected": len(detected_threats) > 0,
-        "count": p_count,
         "image": annotated_img,
         "raw_image": img_array 
     }
