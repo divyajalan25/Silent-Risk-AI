@@ -1,0 +1,8 @@
+streamlit
+streamlit-geolocation
+opencv-python-headless
+ultralytics
+numpy
+SpeechRecognition
+PyAudio
+Pillow
